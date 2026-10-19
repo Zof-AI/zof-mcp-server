@@ -1,0 +1,1 @@
+{"mcpServers":{"zof":{"command":"zof-mcp-server","args":["--workspace","/absolute/path/to/your/project"]}}}

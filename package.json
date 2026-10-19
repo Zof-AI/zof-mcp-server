@@ -1,0 +1,65 @@
+{
+  "name": "@zof-ai/mcp-server",
+  "version": "0.1.0",
+  "description": "Workspace-restricted local verification tools over MCP stdio",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "zof-mcp-server": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs",
+    "examples",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zof-AI/zof-mcp-server.git"
+  },
+  "homepage": "https://github.com/Zof-AI/zof-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/Zof-AI/zof-mcp-server/issues"
+  },
+  "keywords": [
+    "verification",
+    "testing",
+    "zof"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.19.11"
+  },
+  "dependencies": {
+    "@zof-ai/cli": "0.1.0",
+    "@zof-ai/evidence-spec": "0.1.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "3.25.76",
+    "@zof-ai/testgen": "0.1.0"
+  }
+}

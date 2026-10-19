@@ -1,0 +1,1 @@
+{"name":"zof_evaluate_policy","arguments":{"policyPath":"policy.json","evidencePath":"evidence.json"}}
