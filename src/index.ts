@@ -2,9 +2,9 @@ import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {z} from 'zod';
 import {parse,resolve} from 'node:path';
 import {homedir} from 'node:os';
-import {verify,analyzeImpact,evaluatePolicy,CAPABILITIES} from '@zofai/cli';
-import {safeListDirectory,safeReadJson,safeReadFile,redact,assertSafeRelativePath} from '@zofai/evidence-spec';
-import {generateTests} from '@zofai/testgen';
+import {verify,analyzeImpact,evaluatePolicy,CAPABILITIES} from '@zof-ai/cli';
+import {safeListDirectory,safeReadJson,safeReadFile,redact,assertSafeRelativePath} from '@zof-ai/evidence-spec';
+import {generateTests} from '@zof-ai/testgen';
 import type {Transport} from '@modelcontextprotocol/sdk/shared/transport.js';
 import {PrivateErrorsTransport} from './transport.js';
 class PrivateErrorsServer extends McpServer { override async connect(transport:Transport){await super.connect(new PrivateErrorsTransport(transport));} }
