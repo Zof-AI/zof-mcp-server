@@ -2,13 +2,36 @@
 
 Give a compatible coding agent read-only access to bounded local change verification. Six tools use the official MCP SDK and stdio. The host chooses one workspace at startup; tool arguments cannot change it. No account, network service, shell tool, plugin loading or repository upload is provided.
 
+<!-- ZOF_NPM_INSTALL_START -->
+## Install from npm
+
+Use Node.js 22 or 24 and npm. File-based operations require Linux or macOS with Python 3.10 or newer; Windows file operations fail closed. In a new project directory, install the version used by this guide:
+
+```sh
+npm install --ignore-scripts --save-exact @zof-ai/mcp-server@0.1.2
+npx --no-install zof-mcp-server --help
+```
+
+The package includes compiled JavaScript, TypeScript declarations and its runtime dependencies. No source build, Zof account or repository upload is required. `--ignore-scripts` disables installation lifecycle scripts; `--no-install` keeps the example commands from downloading another package.
+
+Confirm the public ESM entry point; this prints `function`:
+
+```sh
+node --input-type=module -e "import('@zof-ai/mcp-server').then(api => console.log(typeof api.createServer))"
+```
+
+Use the MCP client configuration below to start the installed server and call its six local tools. Stdout is reserved for MCP protocol traffic.
+
+Package: [@zof-ai/mcp-server](https://www.npmjs.com/package/@zof-ai/mcp-server). The source-checkout instructions and three additional workflows follow.
+<!-- ZOF_NPM_INSTALL_END -->
+
 <!-- ZOF_RELEASE_INSTALL_START -->
 ## Install from GitHub source
 
 Requires Node.js 22 or 24, npm, and Git. Filesystem operations require Linux or macOS with Python 3.10 or newer; Windows file operations fail closed. Clone this repository and explicitly prepare its reviewed release dependencies:
 
 ```sh
-git clone https://github.com/Zof-AI/zof-mcp-server.git
+git clone --branch v0.1.2 --depth 1 https://github.com/Zof-AI/zof-mcp-server.git
 cd zof-mcp-server
 node scripts/bootstrap.mjs --allow-network
 npm ci --ignore-scripts --prefer-offline
@@ -18,20 +41,32 @@ npm test
 
 The bootstrap downloads only the exact versioned dependency assets from [GitHub Releases](https://github.com/Zof-AI/zof-mcp-server/releases), as listed in `scripts/release-dependencies.json`, verifies SHA256 and byte size, and adds them to the npm cache. It does not extract archives, run package scripts, collect application data, or send credentials. Downloads require the explicit flag and follow only HTTPS GitHub asset redirects. Installation then fetches ordinary third-party dependencies from npm. Use a writable npm cache; set `npm_config_cache` consistently for both commands if needed. An unavailable asset, changed hash, or oversized response stops installation.
 
-GitHub source and release artifacts are the initial distribution channel. These instructions do not claim that `@zof-ai` packages are published on npm or that the VS Code extension is listed in Marketplace.
 <!-- ZOF_RELEASE_INSTALL_END -->
 
 ## Install and run
 
-After the GitHub source installation above, Start with `node dist/cli.js --workspace /absolute/path/to/synthetic-project` (the installed command is `zof-mcp-server`). Stdout is exclusively MCP protocol traffic.
+After npm installation, configure an MCP stdio client to run the installed entry point:
+
+```json
+{
+  "mcpServers": {
+    "zof": {
+      "command": "node",
+      "args": ["/absolute/path/to/install/node_modules/@zof-ai/mcp-server/dist/cli.js", "--workspace", "/absolute/path/to/your/project"]
+    }
+  }
+}
+```
+
+Replace both absolute paths, using the project where you ran `npm install` for the first and the narrow workspace to inspect for the second. Use a supported Node executable. Connect the client and call `zof_get_capabilities` with `{}`. A source checkout can instead use `node dist/cli.js --workspace /absolute/path/to/your/project`. Stdout is exclusively MCP protocol traffic.
 
 ## Three practical client examples
 
-1. Configure any MCP stdio client with command `zof-mcp-server` and args `["--workspace", "/absolute/path/to/your/project"]`. Call `zof_get_capabilities` with `{}` to inspect limits and unavailable hosted support.
+1. Configure an MCP stdio client with the Node entry-point configuration above. Call `zof_get_capabilities` with `{}` to inspect limits and unavailable hosted support.
 2. Call `zof_verify_change` or `zof_generate_evidence` with `{"changedFiles":["src/math.ts"]}`. The result describes static checks; it does not assert tests ran. Call `zof_analyze_impact` with the same arguments to inspect dependencies.
 3. Call `zof_evaluate_policy` with `{"policyPath":"policy.json","evidencePath":"evidence.json"}`. Or call `zof_suggest_tests` with `{"sourcePath":"src/math.ts","language":"typescript","functions":["add"],"module":"./math.js"}` for reviewable local test candidates. No generated code executes or is written.
 
-See examples/client.json for configuration. Replace its workspace argument with a narrow local project path; home and filesystem roots are rejected. Use the built source checkout from the installation instructions above. Never put credentials in client configuration or command arguments.
+See examples/client.json for configuration. Replace its entry-point path with the installed package path and its workspace argument with a narrow local project path; home and filesystem roots are rejected. The npm-installed server and built source checkout expose the same tools. Never put credentials in client configuration or command arguments.
 
 ## Protocol and safety contract
 

@@ -1,1 +1,1 @@
-{"mcpServers":{"zof":{"command":"zof-mcp-server","args":["--workspace","/absolute/path/to/your/project"]}}}
+{"mcpServers":{"zof":{"command":"node","args":["/absolute/path/to/install/node_modules/@zof-ai/mcp-server/dist/cli.js","--workspace","/absolute/path/to/your/project"]}}}

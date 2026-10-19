@@ -19,7 +19,7 @@ const error=():Result=>({...response({code:'LOCAL_TOOL_ERROR',message:'Input was
 export async function createServer(workspace:string):Promise<McpServer>{
  const root=resolve(workspace);if(root===parse(root).root||root===homedir())throw new Error('WORKSPACE_TOO_BROAD');
  await safeListDirectory(root,'',1);
- const server=new PrivateErrorsServer({name:'zof-mcp-server',version:'0.1.1'},{maxToolInputElements:2000});
+ const server=new PrivateErrorsServer({name:'zof-mcp-server',version:'0.1.2'},{maxToolInputElements:2000});
  let active=0;
  const bounded=(fn:(args:any,signal:AbortSignal)=>Promise<unknown>)=>async(args:any,extra:any):Promise<Result>=>{
    if(active>=2||extra.signal?.aborted)return error();active++;
