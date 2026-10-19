@@ -1,5 +1,5 @@
 {
-  "name": "@zof-ai/mcp-server",
+  "name": "@zofai/mcp-server",
   "version": "0.1.0",
   "description": "Workspace-restricted local verification tools over MCP stdio",
   "type": "module",
@@ -56,10 +56,10 @@
     "@types/node": "22.19.11"
   },
   "dependencies": {
-    "@zof-ai/cli": "0.1.0",
-    "@zof-ai/evidence-spec": "0.1.0",
+    "@zofai/cli": "0.1.0",
+    "@zofai/evidence-spec": "0.1.0",
     "@modelcontextprotocol/sdk": "1.32.1",
     "zod": "3.25.76",
-    "@zof-ai/testgen": "0.1.0"
+    "@zofai/testgen": "0.1.0"
   }
 }
