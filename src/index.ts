@@ -1,10 +1,9 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {z} from 'zod';
-import {realpath} from 'node:fs/promises';
-import {parse} from 'node:path';
+import {parse,resolve} from 'node:path';
 import {homedir} from 'node:os';
 import {verify,analyzeImpact,evaluatePolicy,CAPABILITIES} from '@zof-ai/cli';
-import {safeReadJson,safeReadFile,redact,assertSafeRelativePath} from '@zof-ai/evidence-spec';
+import {safeListDirectory,safeReadJson,safeReadFile,redact,assertSafeRelativePath} from '@zof-ai/evidence-spec';
 import {generateTests} from '@zof-ai/testgen';
 import type {Transport} from '@modelcontextprotocol/sdk/shared/transport.js';
 import {PrivateErrorsTransport} from './transport.js';
@@ -18,7 +17,8 @@ const error=():Result=>({...response({code:'LOCAL_TOOL_ERROR',message:'Input was
 
 /** Read-only capabilities only. Workspace is set by the host, never a tool arg. */
 export async function createServer(workspace:string):Promise<McpServer>{
- const root=await realpath(workspace);if(root===parse(root).root||root===homedir())throw new Error('WORKSPACE_TOO_BROAD');
+ const root=resolve(workspace);if(root===parse(root).root||root===homedir())throw new Error('WORKSPACE_TOO_BROAD');
+ await safeListDirectory(root,'',1);
  const server=new PrivateErrorsServer({name:'zof-mcp-server',version:'0.1.0'},{maxToolInputElements:2000});
  let active=0;
  const bounded=(fn:(args:any,signal:AbortSignal)=>Promise<unknown>)=>async(args:any,extra:any):Promise<Result>=>{
