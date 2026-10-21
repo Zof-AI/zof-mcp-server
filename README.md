@@ -85,3 +85,7 @@ Tests cover discovery, every tool, schemas, cancellation before request, travers
 ## Filesystem and Git boundaries
 
 Filesystem operations use bounded, directory-relative descriptors on Linux/macOS with Python 3.10 or newer. Symlinks, hard-linked inputs, special files and traversal are rejected. Open descriptors remain attached to the original directory when names change. File contents can still change during a read or snapshot; this is not an atomic filesystem snapshot. Windows filesystem operations fail closed; in-memory JSON validation and analysis do not require the file helper. Git reads use a private bounded snapshot: 256 MiB total, 32 MiB per source/object file, 50,000 entries and 64 directory levels. Repository hooks/configuration are not used; local `.git/info/exclude` and `.git/info/attributes` are preserved. External Git metadata, object alternates, grafts, sparse-checkout metadata, linked worktrees and submodules are unsupported. Limits and unsupported metadata cause an explicit error or incomplete result.
+
+## Directory metadata
+
+The repository includes MCP Registry preparation metadata and a maintainer declaration for the existing Glama entry. Registry publication still requires a new reviewed npm version containing the ownership marker; the published 0.1.2 package predates that field. See [distribution prerequisites](docs/DISTRIBUTION.md) for the exact runtime contract and release/claim steps.
