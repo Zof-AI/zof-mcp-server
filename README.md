@@ -1,6 +1,10 @@
-# Zof MCP server
+# Zof MCP server (zof-local)
 
 Give a compatible coding agent read-only access to bounded local change verification. Six tools use the official MCP SDK and stdio. The host chooses one workspace at startup; tool arguments cannot change it. No account, network service, shell tool, plugin loading or repository upload is provided.
+
+## Local vs hosted
+
+This package, `zof-local`, works offline with no account and gives local estimates only. The hosted `zof` server at https://mcp.zof.ai/mcp signs in with your Zof account and answers from your company's real Zof.
 
 <!-- ZOF_NPM_INSTALL_START -->
 ## Install from npm
@@ -8,7 +12,7 @@ Give a compatible coding agent read-only access to bounded local change verifica
 Use Node.js 22 or 24 and npm. File-based operations require Linux or macOS with Python 3.10 or newer; Windows file operations fail closed. In a new project directory, install the version used by this guide:
 
 ```sh
-npm install --ignore-scripts --save-exact @zof-ai/mcp-server@0.1.2
+npm install --ignore-scripts --save-exact @zof-ai/mcp-server@0.2.0
 npx --no-install zof-mcp-server --help
 ```
 
@@ -31,7 +35,7 @@ Package: [@zof-ai/mcp-server](https://www.npmjs.com/package/@zof-ai/mcp-server).
 Requires Node.js 22 or 24, npm, and Git. Filesystem operations require Linux or macOS with Python 3.10 or newer; Windows file operations fail closed. Clone this repository and explicitly prepare its reviewed release dependencies:
 
 ```sh
-git clone --branch v0.1.2 --depth 1 https://github.com/Zof-AI/zof-mcp-server.git
+git clone --branch v0.2.0 --depth 1 https://github.com/Zof-AI/zof-mcp-server.git
 cd zof-mcp-server
 node scripts/bootstrap.mjs --allow-network
 npm ci --ignore-scripts --prefer-offline
@@ -50,7 +54,7 @@ After npm installation, configure an MCP stdio client to run the installed entry
 ```json
 {
   "mcpServers": {
-    "zof": {
+    "zof-local": {
       "command": "node",
       "args": ["/absolute/path/to/install/node_modules/@zof-ai/mcp-server/dist/cli.js", "--workspace", "/absolute/path/to/your/project"]
     }
@@ -58,13 +62,13 @@ After npm installation, configure an MCP stdio client to run the installed entry
 }
 ```
 
-Replace both absolute paths, using the project where you ran `npm install` for the first and the narrow workspace to inspect for the second. Use a supported Node executable. Connect the client and call `zof_get_capabilities` with `{}`. A source checkout can instead use `node dist/cli.js --workspace /absolute/path/to/your/project`. Stdout is exclusively MCP protocol traffic.
+Replace both absolute paths, using the project where you ran `npm install` for the first and the narrow workspace to inspect for the second. Use a supported Node executable. Connect the client and call `zof_local_get_capabilities` with `{}`. A source checkout can instead use `node dist/cli.js --workspace /absolute/path/to/your/project`. Stdout is exclusively MCP protocol traffic.
 
 ## Three practical client examples
 
-1. Configure an MCP stdio client with the Node entry-point configuration above. Call `zof_get_capabilities` with `{}` to inspect limits and unavailable hosted support.
-2. Call `zof_verify_change` or `zof_generate_evidence` with `{"changedFiles":["src/math.ts"]}`. The result describes static checks; it does not assert tests ran. Call `zof_analyze_impact` with the same arguments to inspect dependencies.
-3. Call `zof_evaluate_policy` with `{"policyPath":"policy.json","evidencePath":"evidence.json"}`. Or call `zof_suggest_tests` with `{"sourcePath":"src/math.ts","language":"typescript","functions":["add"],"module":"./math.js"}` for reviewable local test candidates. No generated code executes or is written.
+1. Configure an MCP stdio client with the Node entry-point configuration above. Call `zof_local_get_capabilities` with `{}` to inspect limits and unavailable hosted support.
+2. Call `zof_local_verify_change` or `zof_local_generate_evidence` with `{"changedFiles":["src/math.ts"]}`. The result describes static checks; it does not assert tests ran. Call `zof_local_analyze_impact` with the same arguments to inspect dependencies.
+3. Call `zof_local_evaluate_policy` with `{"policyPath":"policy.json","evidencePath":"evidence.json"}`. Or call `zof_local_suggest_tests` with `{"sourcePath":"src/math.ts","language":"typescript","functions":["add"],"module":"./math.js"}` for reviewable local test candidates. No generated code executes or is written.
 
 See examples/client.json for configuration. Replace its entry-point path with the installed package path and its workspace argument with a narrow local project path; home and filesystem roots are rejected. The npm-installed server and built source checkout expose the same tools. Never put credentials in client configuration or command arguments.
 
@@ -85,3 +89,7 @@ Tests cover discovery, every tool, schemas, cancellation before request, travers
 ## Filesystem and Git boundaries
 
 Filesystem operations use bounded, directory-relative descriptors on Linux/macOS with Python 3.10 or newer. Symlinks, hard-linked inputs, special files and traversal are rejected. Open descriptors remain attached to the original directory when names change. File contents can still change during a read or snapshot; this is not an atomic filesystem snapshot. Windows filesystem operations fail closed; in-memory JSON validation and analysis do not require the file helper. Git reads use a private bounded snapshot: 256 MiB total, 32 MiB per source/object file, 50,000 entries and 64 directory levels. Repository hooks/configuration are not used; local `.git/info/exclude` and `.git/info/attributes` are preserved. External Git metadata, object alternates, grafts, sparse-checkout metadata, linked worktrees and submodules are unsupported. Limits and unsupported metadata cause an explicit error or incomplete result.
+
+## Directory metadata
+
+The repository includes MCP Registry preparation metadata and a maintainer declaration for the existing Glama entry. Registry publication still requires the reviewed npm version containing the ownership marker. See [distribution prerequisites](docs/DISTRIBUTION.md).
