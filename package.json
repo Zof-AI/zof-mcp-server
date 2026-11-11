@@ -59,7 +59,7 @@
   "dependencies": {
     "@zof-ai/cli": "0.1.2",
     "@zof-ai/evidence-spec": "0.1.1",
-    "@modelcontextprotocol/sdk": "1.32.1",
+    "@modelcontextprotocol/sdk": "1.32.2",
     "zod": "3.25.76",
     "@zof-ai/testgen": "0.1.1"
   },
